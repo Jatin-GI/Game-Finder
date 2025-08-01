@@ -59,20 +59,29 @@ st.set_page_config(page_title="Steam Game Recommender", layout="centered")
 st.title("🎮 Steam Game Recommender")
 st.write("Describe what kind of game you’re looking for and get top recommendations!")
 
-user_query = st.text_area("🧠 Enter your game preferences (e.g., 'free multiplayer shooter with great graphics')", height=100)
+user_query = st.text_area(
+    "🧠 Enter your game preferences (e.g., 'free multiplayer shooter with great graphics')",
+    height=100
+)
 
 top_n = st.slider("Number of recommendations", min_value=1, max_value=10, value=5)
 
+# Main button logic
 if st.button("🔍 Recommend"):
     if user_query.strip() == "":
         st.warning("Please enter a description.")
     else:
         with st.spinner("Finding the best matches..."):
             results = recommend_from_text(user_query, top_n)
+
             for game in results:
-                st.subheader(game['Game Name'])
-                st.markdown(f"**🗓️ Launch Date:** {game['Launch Date']}")
-                st.markdown(f"**💰 Price:** {game['Price']}")
-                st.markdown(f"**📝 Description:** {game['Description']}")
-                st.image(game['Image'], width=300)
-                st.markdown("---")
+                with st.container():
+                    # 3-column layout to center the block
+                    col1, col2, col3 = st.columns([1, 3, 1])
+                    with col2:
+                        st.image(game['Image'], use_container_width=True)
+                        st.subheader(game['Game Name'])
+                        st.markdown(f"**🗓️ Launch Date:** {game['Launch Date']}")
+                        st.markdown(f"**💰 Price:** {game['Price']}")
+                        st.markdown(f"**📝 Description:** {game['Description']}")
+                        st.markdown("---")
